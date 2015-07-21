@@ -1,0 +1,40 @@
+#!/bin/bash
+
+sudo -v
+# script dir
+dir=/home/fernando/12.Scripts/Calibre
+
+#Get the number of the lastest version
+
+wget -O  $dir/latest "http://code.calibre-ebook.com/latest"
+
+#dirty fix to match version --calibre output
+a="calibre (calibre "
+b=")"
+# Keep the latest version
+version_web=$a$(cat "$dir/latest")$b
+
+version_local=$(calibre --version)
+
+#Compare both versions and update if necessary
+if [ "$version_web"=="$version_local" ]
+then
+  echo "Both versions are equal. LATEST:  $version_web , LOCAL: $version_local"
+  echo "No need for update"
+else
+  echo "Updating...."
+  wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main('/home/$USER')"
+
+fi
+
+#Cleaning the mess
+if [ -a ~/linux-installer.py ]
+then
+echo "Deleting.... "
+rm ~/linux-installer.py
+fi
+rm $dir/latest
+
+sleep 5
+
+exit 1
