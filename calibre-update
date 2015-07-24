@@ -7,11 +7,15 @@ if [[ $EUID -ne 0 ]]; then
   sudo -v
 fi
 
+function update() {
+  wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main('/home/$USER')"
+}
+
 # GET THE DIR WE'RE IN
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 #Get the number of the lastest version . I'm sure there's a better way to do this :)
-wget -O  $dir/latest "http://code.calibre-ebook.com/latest"
+wget -O  $dir/latest "http://code.calibre-ebook.com/latest" >/dev/null 2>&1
 
 #dirty fix to match version --calibre output
 a="calibre (calibre "
@@ -22,21 +26,31 @@ version_web=$a$(cat "$dir/latest")$b
 version_local=$(calibre --version)
 
 #Compare both versions and update if necessary
-if [ "$version_web"=="$version_local" ]
+if [ "$version_web" == "$version_local" ]
 then
   echo "Both versions are equal. LATEST:  $version_web , LOCAL: $version_local"
   echo "No need for update"
 else
-  echo "Updating...."
-   wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main('/home/$USER')"
+  echo "Update Calibre? [y/n]"
+  read option
+
+  if [[ "$option" = "y" || "$option" = "yes" ]]; then
+    echo "Updating...."
+    update
+  else
+      echo "Calibre latest version is: $version_web , your version is : $version_local"
+      sleep 3
+      exit 1
+  fi
 
 fi
 
-#Cleaning the mess
+#Cleaning up the mess
 if [ -a ~/linux-installer.py ]
 then
 echo "Deleting.... "
 rm ~/linux-installer.py
+sleep 3
 fi
 rm $dir/latest
 
