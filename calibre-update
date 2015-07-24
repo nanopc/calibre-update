@@ -1,11 +1,16 @@
 #!/bin/bash
 
-sudo -v
-# script dir
-dir=/home/fernando/12.Scripts/Calibre
 
-#Get the number of the lastest version
+#ROOT user?
+if [[ $EUID -ne 0 ]]; then
+  echo "You must be a root user"
+  sudo -v
+fi
 
+# GET THE DIR WE'RE IN
+dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+#Get the number of the lastest version . I'm sure there's a better way to do this :)
 wget -O  $dir/latest "http://code.calibre-ebook.com/latest"
 
 #dirty fix to match version --calibre output
@@ -23,7 +28,7 @@ then
   echo "No need for update"
 else
   echo "Updating...."
-  wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main('/home/$USER')"
+   wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main('/home/$USER')"
 
 fi
 
