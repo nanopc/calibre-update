@@ -31,14 +31,20 @@ then
   echo "Both versions are equal. LATEST:  $version_web , LOCAL: $version_local"
   echo "No need for update"
 else
-  echo "Update Calibre? [y/n]"
+  echo "Close Calibre and update? [y/n]"
   read option
 
   if [[ "$option" = "y" || "$option" = "yes" ]]; then
+    
+	calibre -s
+    sleep 3
+
     echo "Updating...."
-    update
+	update
+
   else
       echo "Calibre latest version is: $version_web , your version is : $version_local"
+	  rm $dir/latest
       sleep 3
       exit 1
   fi
@@ -52,6 +58,7 @@ echo "Deleting.... "
 rm ~/linux-installer.py
 sleep 3
 fi
+
 rm $dir/latest
 
 sleep 5
