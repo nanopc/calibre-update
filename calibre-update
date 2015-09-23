@@ -31,11 +31,12 @@ then
   echo "Both versions are equal. LATEST:  $version_web , LOCAL: $version_local"
   echo "No need for update"
 else
+  echo "Versions are: LATEST:  $version_web , LOCAL: $version_local"
   echo "Close Calibre and update? [y/n]"
   read option
 
   if [[ "$option" = "y" || "$option" = "yes" ]]; then
-    
+
 	calibre -s
     sleep 3
 
