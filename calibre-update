@@ -29,7 +29,7 @@ version_local=$(calibre --version)
 if [ "$version_web" == "$version_local" ]
 then
   echo "Both versions are equal. LATEST:  $version_web , LOCAL: $version_local"
-  echo "No need for update"
+  notify-send -u normal "No need for update"
 else
   echo "Versions are: LATEST:  $version_web , LOCAL: $version_local"
   echo "Close Calibre and update? [y/n]"
@@ -41,11 +41,14 @@ else
     sleep 3
 
     echo "Updating...."
+
+    notify-send -u normal "Updating"
 	update
 
   else
       echo "Calibre latest version is: $version_web , your version is : $version_local"
 	  rm $dir/latest
+	  notify-send -u normal "Calibre not updated"
       sleep 3
       exit 1
   fi
@@ -61,6 +64,8 @@ sleep 3
 fi
 
 rm $dir/latest
+
+notify-send -u normal "Calibre updated"
 
 sleep 5
 
