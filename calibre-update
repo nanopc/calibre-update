@@ -1,15 +1,21 @@
 #!/bin/bash
 
+function update() {
+  wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main('/home/$USER')"
+}
+
+function notify(){
+
+s=$1
+
+notify-send -u normal Calibre "$1" -i /usr/share/pixmaps/debian-logo.png
+}
 
 #ROOT user?
 if [[ $EUID -ne 0 ]]; then
   echo "You must be a root user"
   sudo -v
 fi
-
-function update() {
-  wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main('/home/$USER')"
-}
 
 # GET THE DIR WE'RE IN
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
@@ -29,7 +35,7 @@ version_local=$(calibre --version)
 if [ "$version_web" == "$version_local" ]
 then
   echo "Both versions are equal. LATEST:  $version_web , LOCAL: $version_local"
-  notify-send -u normal "No need for update"
+  notify "No need for update"
 else
   echo "Versions are: LATEST:  $version_web , LOCAL: $version_local"
   echo "Close Calibre and update? [y/n]"
@@ -40,15 +46,15 @@ else
 	calibre -s
     sleep 3
 
-    echo "Updating...."
+    
 
-    notify-send -u normal "Updating"
+    notify "Updating"
 	update
 
   else
       echo "Calibre latest version is: $version_web , your version is : $version_local"
 	  rm $dir/latest
-	  notify-send -u normal "Calibre not updated"
+	  notify "not updated"
       sleep 3
       exit 1
   fi
@@ -58,14 +64,14 @@ fi
 #Cleaning up the mess
 if [ -a ~/linux-installer.py ]
 then
-echo "Deleting.... "
+
 rm ~/linux-installer.py
 sleep 3
 fi
 
 rm $dir/latest
 
-notify-send -u normal "Calibre updated"
+notify "Updated"
 
 sleep 5
 
