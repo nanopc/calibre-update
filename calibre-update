@@ -1,4 +1,6 @@
 #!/bin/bash
+# calibre-update:version:0.5
+#author: @nanopc
 
 function update() {
   wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main('/home/$USER')"
@@ -27,9 +29,26 @@ wget -O  $dir/latest "http://code.calibre-ebook.com/latest" >/dev/null 2>&1
 a="calibre (calibre "
 b=")"
 # Keep the latest version
+
+str=$(cat "$dir/latest")
+i=$((${#str}-1))
+
+if [ "${str:$i:1}" -eq "0" ] # BUG version 0
+then
+
+version_web=$a${str::-2}$b
+
+else
+
 version_web=$a$(cat "$dir/latest")$b
 
+fi
+
+# version_web=$a$(cat "$dir/latest")$b
+
 version_local=$(calibre --version)
+
+
 
 #Compare both versions and update if necessary
 if [ "$version_web" == "$version_local" ]
