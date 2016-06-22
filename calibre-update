@@ -18,7 +18,7 @@ if [[ $EUID -ne 0 ]]; then
   echo -e "\e[1;41m You must be a root user \e[0m"
   sudo -v
 fi
-
+echo "Cheking versions..."
 # GET THE DIR WE'RE IN
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
@@ -33,7 +33,7 @@ b=")"
 str=$(cat "$dir/latest")
 i=$((${#str}-1))
 
-if [ "${str:$i:1}" -eq "0" ] # BUG version 0
+if [ "${str:$i:1}" -eq "0" ] # BUG version .0
 then
 
 version_web=$a${str::-2}$b
