@@ -13,6 +13,11 @@ s=$1
 notify-send -u normal Calibre "$1" -i /usr/share/pixmaps/debian-logo.png
 }
 
+echo "This script will install Calibre from Calibre's repository"
+echo "on your machine"
+echo
+
+
 #ROOT user?
 if [[ $EUID -ne 0 ]]; then
   echo -e "\e[1;41m You must be a root user \e[0m"
@@ -64,8 +69,6 @@ else
 
 	calibre -s
     sleep 3
-
-    
 
     notify "Updating"
 	update
