@@ -1,5 +1,5 @@
 #!/bin/bash
-# calibre-update:version:0.5
+# calibre-update:version:0.6
 #author: @nanopc
 
 function update() {
@@ -9,12 +9,25 @@ function update() {
 function notify(){
 
 s=$1
-
+#Change the logo paht to match your distribution logo.
 notify-send -u normal Calibre "$1" -i /usr/share/pixmaps/debian-logo.png
 }
 
-echo "This script will install Calibre from Calibre's repository"
-echo "on your machine"
+function yesno() {
+	OPTION=
+	while [ "$OPTION" != "yes" -a "$OPTION" != "no" ]; do
+
+		 echo -e "\e[1;33m  Close Calibre and update? [yes/no] \e[0m"
+		
+		read OPTION
+	done
+	if [ "$OPTION" != "yes" ]; then
+		exit 1
+	fi
+}
+
+echo -e "\e[1;36m This script will install Calibre from Calibre's repository \e[0m"
+echo -e "\e[1;36m on your machine on /home/$USER \e[0m"
 echo
 
 
@@ -49,37 +62,25 @@ version_web=$a$(cat "$dir/latest")$b
 
 fi
 
-# version_web=$a$(cat "$dir/latest")$b
-
 version_local=$(calibre --version)
-
 
 
 #Compare both versions and update if necessary
 if [ "$version_web" == "$version_local" ]
 then
-  echo -e "\e[1;34m Both versions are equal. LATEST:  $version_web , LOCAL: $version_local \e[0m"
+  echo -e "\e[1;36m No need for update \e[0m"
   notify "No need for update"
 else
   echo -e "\e[1;32m  Versions are: LATEST:  $version_web , LOCAL: $version_local \e[0m"
-  echo -e "\e[1;33m  Close Calibre and update? [y/n] \e[0m"
-  read option
 
-  if [[ "$option" = "y" || "$option" = "yes" ]]; then
+    yesno
 
-	calibre -s
+    calibre -s
     sleep 3
 
     notify "Updating"
-	update
-
-  else
-       echo -e "\e[1;31m Calibre latest version is: $version_web , your version is : $version_local \e[0m"
-	  rm $dir/latest
-	  notify "not updated"
-      sleep 3
-      exit 1
-  fi
+    update
+    notify "Updated"
 
 fi
 
@@ -88,13 +89,10 @@ if [ -a ~/linux-installer.py ]
 then
 
 rm ~/linux-installer.py
-sleep 3
+
 fi
 
 rm $dir/latest
 
-notify "Updated"
-
-sleep 5
 
 exit 1
