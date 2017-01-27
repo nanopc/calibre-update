@@ -4,7 +4,7 @@ Calibre se instalará en main('/home/$USER'), cámbialo si prefieres otro direct
 
 ![alt tag](https://raw.githubusercontent.com/nanopc/calibre-update/master/screenshots/Screenshot-Terminal.png)
 
-Versión:0.5 
+Versión:0.6 
 
 :zap: Solucionado problema cuando la versión es X.XX.0
 
