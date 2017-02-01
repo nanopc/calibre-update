@@ -9,7 +9,7 @@ function update() {
 function notify(){
 
 s=$1
-#Change the logo paht to match your distribution logo.
+#Change the logo path to match your distribution logo.
 notify-send -u normal Calibre "$1" -i /usr/share/pixmaps/debian-logo.png
 }
 
