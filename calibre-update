@@ -1,14 +1,15 @@
 #!/bin/bash
-# calibre-update:version:0.6
+# calibre-update:version:0.7
 #author: @nanopc
 
+install_directory="/home/$USER/09.Software"
+
 function update() {
-  wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main('/home/$USER')"
+  wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main('$install_directory')"
 }
 
 function notify(){
 
-s=$1
 #Change the logo path to match your distribution logo.
 notify-send -u normal Calibre "$1" -i /usr/share/pixmaps/debian-logo.png
 }
@@ -26,17 +27,15 @@ function yesno() {
 	fi
 }
 
-echo -e "\e[1;36m This script will install Calibre from Calibre's repository \e[0m"
-echo -e "\e[1;36m on your machine on /home/$USER \e[0m"
-echo
+
 
 
 #ROOT user?
 if [[ $EUID -ne 0 ]]; then
-  echo -e "\e[1;41m You must be a root user \e[0m"
+  #echo -e "\e[1;41m You must be a root user \e[0m"
   sudo -v
 fi
-echo "Cheking versions..."
+echo "Checking versions..."
 # GET THE DIR WE'RE IN
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
@@ -62,7 +61,7 @@ version_web=$a$(cat "$dir/latest")$b
 
 fi
 
-version_local=$(calibre --version)
+version_local=$($install_directory/calibre/calibre --version)
 
 
 #Compare both versions and update if necessary
@@ -71,10 +70,13 @@ then
   echo -e "\e[1;36m No need for update \e[0m"
   notify "No need for update"
 else
+  echo -e "\e[1;36m This script will install Calibre from Calibre's repository \e[0m"
+  echo -e "\e[1;36m on your machine on $install_directory/calibre \e[0m"
+  echo ""
   echo -e "\e[1;32m  Versions are: LATEST:  $version_web , LOCAL: $version_local \e[0m"
 
     yesno
-
+    #closing calibre
     calibre -s
     sleep 3
 
@@ -87,12 +89,8 @@ fi
 #Cleaning up the mess
 if [ -a ~/linux-installer.py ]
 then
-
 rm ~/linux-installer.py
-
 fi
-
 rm $dir/latest
-
 
 exit 1
