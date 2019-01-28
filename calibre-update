@@ -60,6 +60,12 @@ else
 version_web=$a$(cat "$dir/latest")$b
 
 fi
+# In case Calibre is not installed
+if ! type "calibre" > /dev/null; 
+then
+  echo "Calibre is not installed"
+  update
+fi
 
 version_local=$($install_directory/calibre/calibre --version)
 
