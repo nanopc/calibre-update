@@ -4,12 +4,18 @@
 
 install_directory="/home/$USER/09.Software"
 
+readonly RED="\033[01;31m"
+readonly GREEN="\033[01;32m"
+readonly BLUE="\033[01;36m"
+readonly YELLOW="\033[00;33m"
+readonly BOLD="\033[01m"
+readonly END="\033[0m"
+
 function update() {
-  wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main('$install_directory')"
+  wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python3 -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main('$install_directory')"
 }
 
 function notify(){
-
 #Change the logo path to match your distribution logo.
 notify-send -u normal Calibre "$1" -i /usr/share/pixmaps/debian-logo.png
 }
@@ -18,7 +24,7 @@ function yesno() {
 	OPTION=
 	while [ "$OPTION" != "yes" -a "$OPTION" != "no" ]; do
 
-		 echo -e "\e[1;33m  Close Calibre and update? [yes/no] \e[0m"
+		 echo -e $RED"Close Calibre and update? [yes/no]"$END
 		
 		read OPTION
 	done
@@ -73,13 +79,13 @@ version_local=$($install_directory/calibre/calibre --version)
 #Compare both versions and update if necessary
 if [ "$version_web" == "$version_local" ]
 then
-  echo -e "\e[1;36m No need for update \e[0m"
+  echo -e $BLUE"No need for update \e[0m"$END
   notify "No need for update"
 else
-  echo -e "\e[1;36m This script will install Calibre from Calibre's repository \e[0m"
-  echo -e "\e[1;36m on your machine on $install_directory/calibre \e[0m"
+  echo -e $BLUE"This script will install Calibre from Calibre's repository"$END
+  echo -e $BLUE"on your machine on $install_directory/calibre"$END
   echo ""
-  echo -e "\e[1;32m  Versions are: LATEST:  $version_web , LOCAL: $version_local \e[0m"
+  echo -e $GREEN"Versions are: LATEST:  $version_web , LOCAL: $version_local"$END
 
     yesno
     #closing calibre
