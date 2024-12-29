@@ -2,7 +2,7 @@
 # calibre-update:version:0.7
 #author: @nanopc
 
-install_directory="/home/$USER/09.Software"
+install_directory="/opt"
 
 readonly RED="\033[01;31m"
 readonly GREEN="\033[01;32m"
@@ -33,14 +33,22 @@ function yesno() {
 	fi
 }
 
-
-
-
 #ROOT user?
 if [[ $EUID -ne 0 ]]; then
-  #echo -e "\e[1;41m You must be a root user \e[0m"
+  echo -e "\e[1;41m You must be a root user \e[0m"
   sudo -v
 fi
+# In case Calibre is not installed
+if ! command -v "calibre" > /dev/null; 
+then
+  echo -e $BLUE"Calibre is not installed \e[0m"$END
+  echo -e $BLUE"This script will install Calibre from Calibre's repository"$END
+  echo -e $BLUE"on your machine on $install_directory/calibre"$END
+  update
+  notify "Installed"
+  exit 1
+fi
+
 echo "Checking versions..."
 # GET THE DIR WE'RE IN
 dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
@@ -65,12 +73,6 @@ else
 
 version_web=$a$(cat "$dir/latest")$b
 
-fi
-# In case Calibre is not installed
-if ! type "calibre" > /dev/null; 
-then
-  echo "Calibre is not installed"
-  update
 fi
 
 version_local=$($install_directory/calibre/calibre --version)
